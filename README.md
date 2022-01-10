@@ -24,6 +24,27 @@ celeryワーカーは例として、
 
 # 開発時
 
+## 環境変数の設定
+開発用であれば以下をそのままコピーして `プロジェクトルート/api_server/.env.dev` として保存。
+```dotenv
+DJANGO_ENV=dev
+DEBUG=1
+SECRET_KEY=a
+DJANGO_ALLOWED_HOSTS=*
+SQL_ENGINE=django.db.backends.postgresql
+SQL_DATABASE=api_db
+SQL_USER=api_user
+SQL_PASSWORD=pass123
+SQL_HOST=db
+SQL_PORT=5432
+DATABASE=postgres
+RABBITMQ_USER=user
+RABBITMQ_PASS=pass123
+TIMEZONE=Asia/Tokyo
+CELERY_WORKER_CONCURRENCY=1
+CELERY_BROKER_URL=amqp://user:pass123@rabbit:5672/
+```
+
 ## 事前準備（必須ではないが推奨）
 ホストマシン側でもpython環境を整えておくと、IDEで開発するときに補完が効くので便利
 ```sh
@@ -71,6 +92,9 @@ bin/dev exec app python manage.py flush --no-input
 
 # 本番時
 そのままdocker composeを使って本番稼働する場合。
+
+## 環境変数の設定
+開発用の例を参考にして `プロジェクトルート/api_server/.env.prod` を作成。
 
 ## 初回インストール（あるいはアップデート時に実行）
 初回、もしくはDBに変更を加えるアップデート、DB初期化時などに実行

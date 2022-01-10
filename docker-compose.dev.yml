@@ -1,0 +1,59 @@
+version: "3.8"
+services:
+  db:
+    image: postgres:14-alpine
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${SQL_USER}
+      - POSTGRES_PASSWORD=${SQL_PASSWORD}
+      - POSTGRES_DB=${SQL_DATABASE}
+  rabbit:
+    image: rabbitmq:3.9-management
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS}
+    ports:
+      - "5672:5672"
+      - "15672:15672"  # managementプラグインにアクセスするため
+  worker1:
+    build:
+      context: ./api_server
+      dockerfile: Dockerfile.worker
+    command: sh ./run_celery.sh
+    volumes:
+      - ./api_server:/app
+    depends_on:
+      - rabbit
+    env_file:
+      - ./api_server/.env.dev
+  worker2:
+    build:
+      context: ./api_server
+      dockerfile: Dockerfile.worker
+    command: sh ./run_celery.sh
+    volumes:
+      - ./api_server:/app
+    depends_on:
+      - rabbit
+    env_file:
+      - ./api_server/.env.dev
+  app:
+    build:
+      context: ./api_server
+      dockerfile: Dockerfile.dev
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - rabbit
+    volumes:
+      - ./api_server:/usr/src/app/
+    env_file:
+      - ./api_server/.env.dev
+
+volumes:
+  postgres_data:

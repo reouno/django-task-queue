@@ -1,0 +1,15 @@
+.idea
+**/*.iml
+
+.python-version
+*.pyc
+__pycache__/
+
+.venv
+venv
+db.sqlite3
+
+.env.*
+
+# Mac
+.DS_Store

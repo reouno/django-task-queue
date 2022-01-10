@@ -1,0 +1,6 @@
+#!/bin/sh
+set -eux
+
+# プロジェクト直下で実行すること
+
+docker-compose -f docker-compose.dev.yml --env-file ./api_server/.env.dev "$@"
